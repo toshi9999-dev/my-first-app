@@ -1,0 +1,62 @@
+:root {
+  --ink: #10232b;
+  --cream: #f7f1df;
+  --orange: #ff663d;
+  --teal: #0e9b91;
+  --yellow: #f8c34e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: #e9e1cf;
+  font-family: "Courier New", monospace;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 70% 0%, #fff9e9 0 12%, transparent 38%), repeating-linear-gradient(135deg, transparent 0 18px, rgba(16,35,43,.025) 19px 20px);
+  content: "";
+}
+
+.game-shell { width: min(1100px, calc(100% - 32px)); margin: 0 auto; padding: 38px 0 28px; }
+.topbar { display: flex; align-items: end; justify-content: space-between; margin-bottom: 18px; }
+.eyebrow { margin: 0 0 5px; color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: .18em; }
+h1 { margin: 0; font-family: Impact, "Arial Narrow", sans-serif; font-size: clamp(43px, 8vw, 76px); line-height: .8; letter-spacing: -.03em; }
+.restart-button { border: 2px solid var(--ink); padding: 11px 15px; color: var(--ink); background: transparent; font: 700 11px "Space Mono", monospace; letter-spacing: .08em; cursor: pointer; }
+.restart-button:hover { color: var(--cream); background: var(--ink); }
+.restart-button span { margin-left: 8px; font-size: 17px; vertical-align: -2px; }
+.top-actions { display: flex; gap: 8px; }
+.game-card { position: relative; overflow: hidden; border: 2px solid var(--ink); background: #79c9c3; box-shadow: 9px 9px 0 var(--ink); }
+.hud { position: absolute; top: 0; right: 0; left: 0; z-index: 2; display: flex; gap: 30px; align-items: center; padding: 14px 18px; color: var(--cream); background: rgba(16, 35, 43, .88); }
+.hud-item { display: flex; gap: 9px; align-items: baseline; }
+.hud-label { color: #88d8d0; font-size: 9px; letter-spacing: .12em; }
+.hud strong { font-size: 14px; letter-spacing: .05em; }
+#game-canvas { display: block; width: 100%; height: auto; min-height: 360px; object-fit: cover; }
+.message { position: absolute; top: 50%; left: 50%; display: flex; flex-direction: column; align-items: center; width: min(90%, 430px); padding: 27px 20px; text-align: center; background: rgba(247, 241, 223, .94); border: 2px solid var(--ink); transform: translate(-50%, -42%); transition: opacity .2s; }
+.message.hidden { opacity: 0; pointer-events: none; }
+.message-kicker { color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: .2em; }
+.message strong { margin: 8px 0 12px; font-family: Impact, "Arial Narrow", sans-serif; font-size: 42px; line-height: .9; }
+.message small { font-size: 10px; letter-spacing: .05em; }
+.controls { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; padding: 20px 2px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+kbd { display: inline-block; margin-right: 4px; padding: 5px 7px; border: 1px solid var(--ink); background: var(--cream); box-shadow: 2px 2px 0 var(--ink); }
+.tip { margin-left: auto; color: #46616a; font-weight: 400; }
+.stage-select { display: flex; align-items: center; gap: 5px; }
+.stage-select button { border: 1px solid var(--ink); padding: 4px 7px; color: var(--ink); background: var(--cream); font: 700 10px "Space Mono", monospace; cursor: pointer; }
+.stage-select button.active, .stage-select button:hover { color: var(--cream); background: var(--ink); }
+
+@media (max-width: 600px) {
+  .game-shell { width: calc(100% - 20px); padding-top: 25px; }
+  .topbar { align-items: start; }
+  .restart-button { padding: 8px; }
+  .top-actions { gap: 5px; }
+  .hud { gap: 12px; padding: 10px; }
+  .hud-label { font-size: 7px; }
+  .hud strong { font-size: 10px; }
+  .tip { width: 100%; margin-left: 0; }
+}
