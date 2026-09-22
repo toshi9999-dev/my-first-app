@@ -35,7 +35,7 @@ export function createAudio(musicButton) {
   };
 
   const updateButton = () => {
-    musicButton.innerHTML = musicOn ? "MUSIC <span>♪ ON</span>" : "MUSIC <span>OFF</span>";
+    musicButton.innerHTML = musicOn ? "音楽 <span>♪ 再生中</span>" : "音楽 <span>停止中</span>";
     musicButton.setAttribute("aria-pressed", String(musicOn));
   };
 
