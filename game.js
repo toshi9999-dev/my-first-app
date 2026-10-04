@@ -223,23 +223,101 @@ function draw() {
 }
 
 function drawPlayer() {
-  const stride = player.grounded ? Math.sin(animationTime * 0.3) * 3 : 0;
+  const stride = player.grounded ? Math.sin(animationTime * 0.3) * 2.5 : 0;
+  const armSwing = player.grounded ? Math.sin(animationTime * 0.3 + Math.PI) * 2 : 0;
   const cx = player.x + player.width / 2;
-  const top = player.y;
   ctx.save();
-  ctx.translate(cx, top);
-  ctx.shadowColor = "rgba(255,112,77,.38)"; ctx.shadowBlur = 8;
-  ctx.fillStyle = "#ff704d";
-  ctx.beginPath(); ctx.moveTo(-15, 9); ctx.lineTo(-12, 1); ctx.lineTo(12, 1); ctx.lineTo(15, 9); ctx.closePath(); ctx.fill();
+  ctx.translate(cx, player.y);
+
+  ctx.fillStyle = "rgba(4,10,22,.38)";
+  ctx.beginPath();
+  ctx.ellipse(0, 42, 13, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "#18263f";
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(-5, 32); ctx.lineTo(-6 + stride, 39);
+  ctx.moveTo(5, 32); ctx.lineTo(5 - stride, 39);
+  ctx.stroke();
+  ctx.fillStyle = "#111a30";
+  ctx.beginPath();
+  ctx.roundRect(-11 + stride, 37, 9, 5, 2);
+  ctx.roundRect(1 - stride, 37, 10, 5, 2);
+  ctx.fill();
+  ctx.fillStyle = "#f04fae";
+  ctx.fillRect(-10 + stride, 37, 6, 1.5);
+  ctx.fillRect(2 - stride, 37, 6, 1.5);
+
+  ctx.shadowColor = "rgba(37,236,238,.48)";
+  ctx.shadowBlur = 8;
+  ctx.fillStyle = "#20c9d2";
+  ctx.beginPath();
+  ctx.moveTo(-9, 22); ctx.lineTo(8, 22); ctx.lineTo(11, 34);
+  ctx.quadraticCurveTo(0, 38, -11, 33); ctx.closePath();
+  ctx.fill();
   ctx.shadowBlur = 0;
-  ctx.fillStyle = "#eeb28d"; ctx.beginPath(); ctx.arc(0, 15, 10, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#172d42"; ctx.fillRect(-9, 12, 18, 6);
-  ctx.fillStyle = "#3d91a3"; ctx.beginPath(); ctx.roundRect(-10, 24, 20, 15, 4); ctx.fill();
-  ctx.fillStyle = "#56e0d2"; ctx.fillRect(-10, 24, 20, 3);
-  ctx.fillStyle = "#eeb28d"; ctx.fillRect(-14, 25, 4, 12); ctx.fillRect(10, 25, 4, 12);
-  ctx.fillStyle = "#10202c"; ctx.fillRect(-7, 14, 3, 3); ctx.fillRect(4, 14, 3, 3);
-  ctx.fillStyle = "#172331"; ctx.fillRect(-8, 39 + stride, 7, 5); ctx.fillRect(1, 39 - stride, 7, 5);
-  ctx.fillStyle = "#f4c86b"; ctx.fillRect(-9, 38 + stride, 8, 2); ctx.fillRect(1, 38 - stride, 8, 2);
+  ctx.fillStyle = "#136779";
+  ctx.beginPath();
+  ctx.moveTo(1, 23); ctx.lineTo(8, 23); ctx.lineTo(11, 34);
+  ctx.lineTo(2, 35); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#f04fae";
+  ctx.beginPath();
+  ctx.moveTo(-7, 24); ctx.lineTo(-3, 25); ctx.lineTo(-1, 35); ctx.lineTo(-6, 34); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#b9fbf4";
+  ctx.fillRect(0, 27, 6, 1.5);
+  ctx.fillStyle = "#f5c86b";
+  ctx.fillRect(-4, 29, 3, 3);
+
+  ctx.strokeStyle = "#20c9d2";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-8, 25); ctx.lineTo(-11, 30 + armSwing);
+  ctx.moveTo(8, 25); ctx.lineTo(11, 29 - armSwing);
+  ctx.stroke();
+  ctx.fillStyle = "#e8a58e";
+  ctx.beginPath();
+  ctx.arc(-11, 31 + armSwing, 2.3, 0, Math.PI * 2);
+  ctx.arc(11, 30 - armSwing, 2.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#d9927e";
+  ctx.beginPath();
+  ctx.arc(0, 14, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#f0b49a";
+  ctx.beginPath();
+  ctx.ellipse(3, 16, 5, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#18213a";
+  ctx.beginPath();
+  ctx.moveTo(-9, 13); ctx.quadraticCurveTo(-13, 3, -4, 2);
+  ctx.quadraticCurveTo(4, -2, 9, 5); ctx.lineTo(13, 10);
+  ctx.lineTo(7, 9); ctx.lineTo(3, 7); ctx.lineTo(1, 12);
+  ctx.lineTo(-4, 10); ctx.lineTo(-7, 17); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#f04fae";
+  ctx.beginPath();
+  ctx.moveTo(-10, 8); ctx.quadraticCurveTo(-6, 1, 3, 3);
+  ctx.lineTo(8, 6); ctx.lineTo(2, 6); ctx.lineTo(-4, 8); ctx.closePath();
+  ctx.fill();
+  ctx.shadowColor = "#42f5e8";
+  ctx.shadowBlur = 7;
+  ctx.fillStyle = "#7afff2";
+  ctx.beginPath();
+  ctx.roundRect(2, 11, 8, 3, 1.5);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#17213a";
+  ctx.fillRect(7, 15, 2, 1);
+  ctx.fillStyle = "#f5c86b";
+  ctx.beginPath();
+  ctx.arc(-8, 17, 1.5, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
