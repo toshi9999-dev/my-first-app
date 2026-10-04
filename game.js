@@ -244,48 +244,122 @@ function drawPlayer() {
 }
 
 function drawParallax() {
-  const layers = [
-    { speed: 0.12, color: "rgba(110,190,220,.12)", size: 130, y: 175 },
-    { speed: 0.28, color: "rgba(6,20,37,.34)", size: 85, y: 290 },
-    { speed: 0.5, color: "rgba(3,12,24,.54)", size: 55, y: 380 }
-  ];
-  layers.forEach(({ speed, color, size, y }) => {
-    ctx.fillStyle = color;
-    const offset = -(cameraX * speed) % 360;
-    for (let x = offset - 360; x < WIDTH + 360; x += 360) {
+  const night = stageIndex === 1;
+  const sunset = stageIndex === 2;
+  const light = night ? "#c2a3e8" : sunset ? "#ff9c68" : "#fff0b0";
+  const sunX = ((WIDTH * 0.72 - cameraX * 0.035) % (WIDTH + 240) + WIDTH + 240) % (WIDTH + 240) - 120;
+  const sunY = sunset ? 205 : 145;
+  const glow = ctx.createRadialGradient(sunX, sunY, 8, sunX, sunY, 190);
+  glow.addColorStop(0, night ? "rgba(183,157,232,.19)" : sunset ? "rgba(255,159,98,.28)" : "rgba(255,238,176,.3)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, WIDTH, 390);
+
+  if (night) {
+    ctx.save();
+    ctx.shadowColor = light;
+    ctx.shadowBlur = 28;
+    ctx.fillStyle = "rgba(225,211,255,.82)";
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 24, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#41446f";
+    ctx.beginPath();
+    ctx.arc(sunX + 10, sunY - 8, 21, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    for (let i = 0; i < 38; i += 1) {
+      const x = ((i * 197 - cameraX * 0.035) % (WIDTH + 60) + WIDTH + 60) % (WIDTH + 60) - 30;
+      const y = 32 + ((i * 71) % 205);
+      const radius = i % 6 === 0 ? 1.5 : 0.8;
+      ctx.globalAlpha = 0.4 + (i % 4) * 0.15;
+      ctx.fillStyle = "#f5e9ff";
       ctx.beginPath();
-      ctx.arc(x + 80, y, size, Math.PI, 0);
-      ctx.arc(x + 210, y, size * 0.75, Math.PI, 0);
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
     }
-  });
-  ctx.fillStyle = "rgba(244,200,107,.7)";
-  for (let i = 0; i < 22; i += 1) {
-    const x = ((i * 173 - cameraX * 0.18) % (WIDTH + 40)) - 20;
-    const y = 68 + ((i * 47) % 170);
-    ctx.fillRect(x, y, i % 3 === 0 ? 3 : 2, i % 3 === 0 ? 3 : 2);
+    ctx.globalAlpha = 1;
+  } else {
+    const sun = ctx.createRadialGradient(sunX - 8, sunY - 9, 2, sunX, sunY, 39);
+    sun.addColorStop(0, "#fff9d9");
+    sun.addColorStop(0.68, light);
+    sun.addColorStop(1, sunset ? "#f0785e" : "#f4c86b");
+    ctx.fillStyle = sun;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 31, 0, Math.PI * 2);
+    ctx.fill();
+    drawClouds();
   }
-  drawJapaneseLandmarks();
+
+  drawMountainLayer(0.1, 340, 36, 0.0035, night ? "rgba(81,91,133,.48)" : sunset ? "rgba(119,75,84,.36)" : "rgba(76,132,137,.34)", 2);
+  drawMountainLayer(0.22, 390, 30, 0.0055, night ? "rgba(49,57,94,.68)" : sunset ? "rgba(89,58,72,.66)" : "rgba(54,99,107,.58)", 7);
+  if (night) drawDistantCity();
+  drawMountainLayer(0.38, 454, 19, 0.008, night ? "rgba(26,35,62,.78)" : sunset ? "rgba(52,41,55,.76)" : "rgba(28,62,70,.76)", 13);
 }
 
-function drawJapaneseLandmarks() {
-  const offset = -(cameraX * 0.2) % 420;
+function drawClouds() {
+  const cloudColor = stageIndex === 2 ? "rgba(255,205,177,.13)" : "rgba(255,255,255,.2)";
+  ctx.fillStyle = cloudColor;
+  for (let i = 0; i < 5; i += 1) {
+    const x = ((i * 263 - cameraX * 0.06) % (WIDTH + 300) + WIDTH + 300) % (WIDTH + 300) - 150;
+    const y = 82 + ((i * 59) % 115);
+    const width = 54 + (i % 3) * 15;
+    ctx.beginPath();
+    ctx.moveTo(x - width, y + 10);
+    ctx.bezierCurveTo(x - width * 0.9, y + 2, x - width * 0.75, y - 9, x - width * 0.48, y - 7);
+    ctx.bezierCurveTo(x - width * 0.34, y - 25, x - width * 0.04, y - 24, x + width * 0.08, y - 8);
+    ctx.bezierCurveTo(x + width * 0.35, y - 17, x + width * 0.59, y - 8, x + width * 0.58, y + 3);
+    ctx.bezierCurveTo(x + width * 0.9, y + 2, x + width, y + 8, x + width, y + 12);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function drawMountainLayer(speed, baseY, height, frequency, color, phase) {
+  const offset = cameraX * speed;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, HEIGHT);
+  for (let x = -20; x <= WIDTH + 20; x += 16) {
+    const worldX = x + offset;
+    const ridge = Math.sin(worldX * frequency + phase) * 0.48
+      + Math.sin(worldX * frequency * 0.47 + phase * 2.1) * 0.31
+      + Math.sin(worldX * frequency * 1.83 + phase * 0.7) * 0.14
+      + Math.sin(worldX * frequency * 3.2 + phase * 1.4) * 0.07;
+    ctx.lineTo(x, baseY - ridge * height);
+  }
+  ctx.lineTo(WIDTH, HEIGHT);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawDistantCity() {
+  const offset = -(cameraX * 0.16) % 700;
   ctx.save();
   ctx.translate(offset, 0);
-  for (let x = -420; x < WIDTH + 420; x += 420) {
-    const base = stageIndex === 2 ? 365 : 390;
-    ctx.fillStyle = "rgba(5, 18, 31, .62)";
-    ctx.beginPath();
-    ctx.moveTo(x, base); ctx.lineTo(x + 105, base - 90); ctx.lineTo(x + 220, base); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = stageIndex === 1 ? "rgba(255,112,77,.7)" : "rgba(244,200,107,.6)";
-    ctx.fillRect(x + 50, base - 104, 7, 18);
-    ctx.fillRect(x + 153, base - 76, 5, 13);
-    ctx.fillStyle = "rgba(5, 18, 31, .9)";
-    ctx.fillRect(x + 276, base - 92, 7, 92);
-    ctx.fillRect(x + 250, base - 94, 60, 7);
-    ctx.fillRect(x + 258, base - 105, 44, 7);
-    ctx.fillStyle = stageIndex === 1 ? "rgba(255,112,77,.9)" : "rgba(244,200,107,.8)";
-    ctx.beginPath(); ctx.arc(x + 280, base - 70, 7, 0, Math.PI * 2); ctx.fill();
+  for (let x = -700; x < WIDTH + 700; x += 700) {
+    for (let i = 0; i < 12; i += 1) {
+      const width = 24 + (i * 13) % 30;
+      const height = 32 + (i * 29) % 78;
+      const buildingX = x + i * 57;
+      const top = 430 - height;
+      ctx.fillStyle = i % 3 === 0 ? "rgba(40,43,76,.68)" : "rgba(31,38,70,.72)";
+      ctx.beginPath();
+      ctx.moveTo(buildingX, 432);
+      ctx.lineTo(buildingX, top + 5);
+      ctx.quadraticCurveTo(buildingX + width / 2, top - (i % 4 === 0 ? 7 : 0), buildingX + width, top + 5);
+      ctx.lineTo(buildingX + width, 432);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,184,137,.38)";
+      for (let row = 0; row < Math.floor(height / 20); row += 1) {
+        for (let column = 0; column < Math.floor(width / 11); column += 1) {
+          if ((i + row * 3 + column * 5) % 4 === 0) continue;
+          ctx.fillRect(buildingX + 5 + column * 11, top + 12 + row * 20, 3, 5);
+        }
+      }
+    }
   }
   ctx.restore();
 }
