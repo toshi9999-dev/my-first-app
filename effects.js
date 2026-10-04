@@ -11,9 +11,8 @@ export function createEffects() {
 
   return {
     coin: (x, y) => burst(x, y, "#fff1a8", 10, 3),
-    stomp: (x, y, color) => { burst(x, y, color, 12, 3.2); shake = Math.max(shake, 5); },
-    landing: (x, y) => burst(x, y, "#8b9b9a", 3, 1.1),
-    goal: (x, y) => { burst(x, y, "#f8c34e", 26, 4.2); shake = 4; },
+    stomp: () => { shake = Math.max(shake, 5); },
+    goal: () => { shake = 4; },
     update: (dt) => {
       particles.forEach((particle) => {
         particle.x += particle.vx * dt;

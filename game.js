@@ -95,7 +95,7 @@ function overlaps(a, b) {
 }
 
 function finishStage() {
-  effects.goal(player.x + player.width / 2, player.y + player.height / 2);
+  effects.goal();
   audio.goal();
   if (stageIndex < stageData.length - 1) {
     gameState = "won"; statusEl.textContent = "達成";
@@ -122,7 +122,7 @@ function update(dt) {
       player.y + player.height > block.y && player.y + player.height < block.y + 26 && player.vy >= 0) {
       const wasAirborne = !player.grounded;
       player.y = block.y - player.height; player.vy = 0; player.grounded = true;
-      if (wasAirborne) { effects.landing(player.x + player.width / 2, block.y); audio.land(); }
+      if (wasAirborne) audio.land();
     }
   });
   level.enemies.forEach((enemy) => {
@@ -133,7 +133,7 @@ function update(dt) {
       const stomping = player.vy > 0 && player.y + player.height - enemy.y < 18;
       if (stomping && enemy.type === "stompable") {
         enemy.defeated = true; player.y = enemy.y - player.height; player.vy = -8;
-        effects.stomp(enemy.x + enemy.w / 2, enemy.y + enemy.h / 2, "#e94e3d"); audio.stomp();
+        effects.stomp(); audio.stomp();
       } else {
         gameState = "dead"; statusEl.textContent = "失敗";
         showMessage("ゲームオーバー", enemy.type === "armored" ? "鎧が固すぎる！" : "出直そう", "スペースキーまたは画面タップで再挑戦", "再挑戦");
@@ -228,11 +228,8 @@ function drawPlayer() {
   const cx = player.x + player.width / 2;
   ctx.save();
   ctx.translate(cx, player.y);
-
-  ctx.fillStyle = "rgba(4,10,22,.38)";
-  ctx.beginPath();
-  ctx.ellipse(0, 42, 13, 3, 0, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
 
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -251,14 +248,11 @@ function drawPlayer() {
   ctx.fillRect(-10 + stride, 37, 6, 1.5);
   ctx.fillRect(2 - stride, 37, 6, 1.5);
 
-  ctx.shadowColor = "rgba(37,236,238,.48)";
-  ctx.shadowBlur = 8;
   ctx.fillStyle = "#20c9d2";
   ctx.beginPath();
   ctx.moveTo(-9, 22); ctx.lineTo(8, 22); ctx.lineTo(11, 34);
   ctx.quadraticCurveTo(0, 38, -11, 33); ctx.closePath();
   ctx.fill();
-  ctx.shadowBlur = 0;
   ctx.fillStyle = "#136779";
   ctx.beginPath();
   ctx.moveTo(1, 23); ctx.lineTo(8, 23); ctx.lineTo(11, 34);
@@ -305,13 +299,12 @@ function drawPlayer() {
   ctx.moveTo(-10, 8); ctx.quadraticCurveTo(-6, 1, 3, 3);
   ctx.lineTo(8, 6); ctx.lineTo(2, 6); ctx.lineTo(-4, 8); ctx.closePath();
   ctx.fill();
-  ctx.shadowColor = "#42f5e8";
-  ctx.shadowBlur = 7;
-  ctx.fillStyle = "#7afff2";
+  ctx.fillStyle = "#50e8e2";
   ctx.beginPath();
   ctx.roundRect(2, 11, 8, 3, 1.5);
   ctx.fill();
-  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#c6fff5";
+  ctx.fillRect(3, 11.5, 4, 1);
   ctx.fillStyle = "#17213a";
   ctx.fillRect(7, 15, 2, 1);
   ctx.fillStyle = "#f5c86b";
